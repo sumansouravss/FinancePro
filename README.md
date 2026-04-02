@@ -159,7 +159,7 @@ Enhancements like:
 
 > Add screenshots of:
 
-* Dashboard view
+* Dashboard view (../assets/Finance Dashboard Dark Mode.png)
 * Transactions page
 * Insights page
 * Dark mode
