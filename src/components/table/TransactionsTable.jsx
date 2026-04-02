@@ -1,15 +1,18 @@
 import { useState, useMemo } from "react";
 import { useStore } from "../../store/useStore";
 import { exportToCSV, exportToJSON } from ".././export/exportUtils";
+import toast from "react-hot-toast";
 
-import {
-  MoreVertical,
-  Search,
-  SlidersHorizontal,
-} from "lucide-react";
+import { MoreVertical, Search } from "lucide-react";
 
 export default function TransactionsTable() {
-  const { role, filteredTransactions } = useStore();
+  const {
+    role,
+    filteredTransactions,
+    deleteTransaction,
+    updateTransaction,
+  } = useStore();
+
   const data = filteredTransactions();
 
   const [query, setQuery] = useState("");
@@ -19,6 +22,8 @@ export default function TransactionsTable() {
   const [typeFilter, setTypeFilter] = useState("all");
   const [sortBy, setSortBy] = useState("date");
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [editData, setEditData] = useState(null);
 
   const ITEMS_PER_PAGE = 5;
 
@@ -45,7 +50,6 @@ export default function TransactionsTable() {
     return result;
   }, [data, query, typeFilter, sortBy]);
 
-  // 🔥 PAGINATION
   const totalPages = Math.ceil(processedData.length / ITEMS_PER_PAGE);
 
   const paginatedData = processedData.slice(
@@ -58,7 +62,6 @@ export default function TransactionsTable() {
 
       {/* 🔝 HEADER */}
       <div className="flex flex-col md:flex-row md:justify-between gap-3 mb-4">
-        
         <h2 className="text-lg font-semibold">Transaction History</h2>
 
         <div className="flex flex-wrap gap-2 items-center">
@@ -75,22 +78,34 @@ export default function TransactionsTable() {
           </div>
 
           {/* FILTER */}
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="bg-white/5 border border-white/10 px-3 py-2 rounded-lg text-sm"
-          >
-            <option value="all">All</option>
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-          </select>
+        <select
+  className="
+    px-3 py-2 rounded-lg border text-sm transition appearance-none
+    bg-white text-black border-gray-300
+    dark:bg-[#020617] dark:text-white dark:border-white/10
+    focus:outline-none focus:ring-2 focus:ring-green-500
+  "
+>
+  <option className="bg-white text-black dark:bg-[#020617] dark:text-white">
+    All
+  </option>
+  <option className="bg-white text-black dark:bg-[#020617] dark:text-white">
+    Income
+  </option>
+  <option className="bg-white text-black dark:bg-[#020617] dark:text-white">
+    Expense
+  </option>
+</select>
 
           {/* SORT */}
           <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="bg-white/5 border border-white/10 px-3 py-2 rounded-lg text-sm"
-          >
+  className="
+    px-3 py-2 rounded-lg border text-sm transition appearance-none
+    bg-white text-black border-gray-300
+    dark:bg-[#020617] dark:text-white dark:border-white/10
+    focus:outline-none focus:ring-2 focus:ring-green-500
+  "
+>
             <option value="date">Sort: Date</option>
             <option value="amount">Sort: Amount</option>
           </select>
@@ -101,13 +116,14 @@ export default function TransactionsTable() {
               setQuery("");
               setTypeFilter("all");
               setSortBy("date");
+              toast("Filters cleared");
             }}
             className="bg-white/5 border border-white/10 px-3 py-2 rounded-lg text-sm hover:bg-white/10"
           >
             Clear
           </button>
 
-          {/* 🔥 EXPORT BUTTON */}
+          {/* 🔥 EXPORT */}
           {role === "admin" && (
             <div className="relative">
               <button
@@ -121,14 +137,30 @@ export default function TransactionsTable() {
                 <div className="absolute right-0 mt-2 w-40 bg-[#0f172a] border border-white/10 rounded-lg shadow-lg z-10">
                   
                   <p
-                    onClick={() => exportToCSV(processedData)}
+                    onClick={() => {
+                      toast.loading("Exporting CSV...");
+                      setTimeout(() => {
+                        exportToCSV(processedData);
+                        toast.dismiss();
+                        toast.success("CSV exported");
+                      }, 800);
+                      setShowExport(false);
+                    }}
                     className="p-2 hover:bg-white/10 cursor-pointer"
                   >
                     Export CSV
                   </p>
 
                   <p
-                    onClick={() => exportToJSON(processedData)}
+                    onClick={() => {
+                      toast.loading("Exporting JSON...");
+                      setTimeout(() => {
+                        exportToJSON(processedData);
+                        toast.dismiss();
+                        toast.success("JSON exported");
+                      }, 800);
+                      setShowExport(false);
+                    }}
                     className="p-2 hover:bg-white/10 cursor-pointer"
                   >
                     Export JSON
@@ -138,17 +170,19 @@ export default function TransactionsTable() {
               )}
             </div>
           )}
-
         </div>
       </div>
 
       {/* 📋 TABLE */}
       <div className="space-y-3">
-
         {paginatedData.length === 0 ? (
-          <p className="text-center py-6 text-gray-400">
-            No transactions found
-          </p>
+          <div className="flex flex-col items-center py-10 text-gray-400">
+            <span className="text-3xl mb-2">📭</span>
+           <div className="flex flex-col items-center py-10 text-gray-400">
+  <span className="text-3xl mb-2">📭</span>
+  <p>No transactions found</p>
+</div>
+          </div>
         ) : (
           paginatedData.map((t) => (
             <div
@@ -166,9 +200,7 @@ export default function TransactionsTable() {
                 </div>
               </div>
 
-              <div className="hidden sm:block text-sm">
-                ₹{t.amount}
-              </div>
+              <div className="hidden sm:block text-sm">₹{t.amount}</div>
 
               <div
                 className={
@@ -180,13 +212,7 @@ export default function TransactionsTable() {
                 {t.type}
               </div>
 
-              <span
-                className={`px-3 py-1 rounded-full text-xs ${
-                  t.type === "expense"
-                    ? "bg-yellow-500/20 text-yellow-400"
-                    : "bg-green-500/20 text-green-400"
-                }`}
-              >
+              <span className="px-3 py-1 rounded-full text-xs bg-green-500/20 text-green-400">
                 {t.type === "expense" ? "Pending" : "Successful"}
               </span>
 
@@ -201,10 +227,16 @@ export default function TransactionsTable() {
                 </button>
 
                 {openRow === t.id && (
-                  <div className="absolute right-0 top-8 w-28 bg-[#0f172a] border border-white/10 rounded-lg shadow-lg">
-                    
+                  <div className="absolute right-0 top-8 w-32 bg-[#0f172a] border border-white/10 rounded-lg shadow-lg z-20">
+
                     {role === "admin" && (
-                      <p className="p-2 hover:bg-white/10 cursor-pointer">
+                      <p
+                        onClick={() => {
+                          setEditData(t);
+                          setOpenRow(null);
+                        }}
+                        className="p-2 hover:bg-white/10 cursor-pointer"
+                      >
                         Edit
                       </p>
                     )}
@@ -214,7 +246,14 @@ export default function TransactionsTable() {
                     </p>
 
                     {role === "admin" && (
-                      <p className="p-2 hover:bg-red-500/20 text-red-400 cursor-pointer">
+                      <p
+                        onClick={() => {
+                          deleteTransaction(t.id);
+                          toast.success("Transaction deleted");
+                          setOpenRow(null);
+                        }}
+                        className="p-2 hover:bg-red-500/20 text-red-400 cursor-pointer"
+                      >
                         Delete
                       </p>
                     )}
@@ -226,6 +265,51 @@ export default function TransactionsTable() {
         )}
       </div>
 
+      {/* 🔥 EDIT MODAL */}
+      {editData && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-[#020617] p-6 rounded-xl w-80 space-y-3">
+            <h3 className="text-lg font-semibold">Edit Transaction</h3>
+
+            <input
+              value={editData.category}
+              onChange={(e) =>
+                setEditData({ ...editData, category: e.target.value })
+              }
+              className="w-full p-2 bg-white/5 rounded"
+            />
+
+            <input
+              value={editData.amount}
+              onChange={(e) =>
+                setEditData({ ...editData, amount: +e.target.value })
+              }
+              className="w-full p-2 bg-white/5 rounded"
+            />
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setEditData(null)}
+                className="px-3 py-1 bg-white/10 rounded"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={() => {
+                  updateTransaction(editData);
+                  toast.success("Transaction updated");
+                  setEditData(null);
+                }}
+                className="px-3 py-1 bg-green-500 rounded"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 🔻 PAGINATION */}
       {totalPages > 1 && (
         <div className="flex justify-center mt-4 gap-2">
@@ -236,7 +320,7 @@ export default function TransactionsTable() {
               className={`px-3 py-1 rounded ${
                 currentPage === i + 1
                   ? "bg-green-500 text-white"
-                  : "bg-white/5 hover:bg-white/10"
+                  : "bg-white/5"
               }`}
             >
               {i + 1}

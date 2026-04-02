@@ -1,14 +1,8 @@
-export default function EmptyState() {
+export default function EmptyState({ message }) {
   return (
-    <div className="text-center mt-20">
-      <h2 className="text-2xl font-bold">No Transactions Yet</h2>
-      <p className="text-gray-400 mt-2">
-        It looks like you haven't added any transactions yet.
-      </p>
-
-      <button className="bg-green-500 px-6 py-3 mt-6 rounded">
-        + Add Transaction
-      </button>
+    <div className="flex flex-col items-center py-10 text-gray-400">
+      <span className="text-3xl mb-2">📭</span>
+      <p>{message}</p>
     </div>
   );
 }

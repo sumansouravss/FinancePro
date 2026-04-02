@@ -14,7 +14,7 @@ export default function Sidebar() {
 
   return (
     <div
-      className="w-64 md:w-64 w-56 bg-white dark:bg-[#0F172A]  h-screen p-5 flex flex-col justify-between bg-gradient-to-b from-[#0B1220] via-[#020617] to-[#020617]
+      className="w-64 md:w-64 bg-white dark:bg-[#0F172A]  h-screen p-5 flex flex-col justify-between bg-gradient-to-b from-[#0B1220] via-[#020617] to-[#020617]
       border-r border-white/5"
     >
       <div className="sidebar-glow ..."></div>

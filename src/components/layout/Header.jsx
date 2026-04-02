@@ -7,17 +7,17 @@ import {
   Moon,
   ChevronDown,
   Menu,
-  Wheat,
 } from "lucide-react";
 
 export default function Header({ onMenuClick }) {
   const { toggleTheme, theme } = useStore();
 
   return (
-    <div className="flex justify-between items-center px-4 md:px-6 py-3 border-b border-white/10 bg-[#0B0F14]">
+    <div className="flex flex-wrap md:flex-nowrap justify-between items-center gap-2 px-4 py-3 border-b border-white/10 bg-[#0B0F14]">
 
       {/* LEFT */}
       <div className="flex items-center gap-3">
+        
         {/* MOBILE MENU */}
         <button
           onClick={onMenuClick}
@@ -32,20 +32,20 @@ export default function Header({ onMenuClick }) {
       </div>
 
       {/* RIGHT */}
-      <div className="flex items-center gap-2 md:gap-3">
+      <div className="flex flex-wrap items-center justify-end gap-2 w-full md:w-auto">
 
-        {/* 🔍 SEARCH (HIDE ON SMALL) */}
-        <div className="hidden sm:flex items-center gap-2 bg-[#111827] px-3 md:px-4 py-2 rounded-full border border-white/10">
+        {/* 🔍 SEARCH */}
+        <div className="flex items-center gap-2 bg-[#111827] px-3 md:px-4 py-2 rounded-full border border-white/10 w-full sm:w-auto">
           <Search size={14} className="text-gray-400" />
           <input
             placeholder="Search..."
-            className="bg-transparent outline-none text-sm text-white placeholder-gray-400 w-24 md:w-40"
+            className="bg-transparent outline-none text-sm text-white placeholder-gray-400 w-full sm:w-40 md:w-60"
           />
         </div>
 
-        {/* 🤖 AI (HIDE TEXT ON MOBILE) */}
+        {/* 🤖 AI */}
         <button className="flex items-center gap-1 md:gap-2 bg-[#111827] border border-white/10 px-2 md:px-3 py-2 rounded-full hover:bg-white/10 transition">
-          <Bot color="grey" size={20} />
+          <Bot color="grey" size={18} />
           <span className="hidden md:inline text-sm text-gray-400">
             AI
           </span>
@@ -85,7 +85,6 @@ export default function Header({ onMenuClick }) {
             className="w-7 h-7 md:w-8 md:h-8 rounded-full"
           />
 
-          {/* HIDE NAME ON SMALL */}
           <div className="hidden md:block text-sm">
             <p className="text-white leading-none">John</p>
             <p className="text-xs text-gray-400">Admin</p>
@@ -93,6 +92,7 @@ export default function Header({ onMenuClick }) {
 
           <ChevronDown size={14} className="hidden md:block" />
         </div>
+
       </div>
     </div>
   );
