@@ -55,3 +55,90 @@ body {
 .sidebar-glow {
   box-shadow: inset 0 0 80px rgba(59,130,246,0.1);
 }
+
+/* ===================================================== */
+/* 🔥 GLASS EFFECT (USED IN LOADER + MODALS) */
+/* ===================================================== */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ===================================================== */
+/* 🔥 3D CUBE LOADER */
+/* ===================================================== */
+/* ===================================================== */
+/* 🔥 PREMIUM 3D CUBE LOADER */
+/* ===================================================== */
+
+.cube {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  transform-style: preserve-3d;
+  animation: rotateCube 3s infinite linear;
+}
+
+/* ✨ GLOW LAYER */
+.cube::after {
+  content: "";
+  position: absolute;
+  inset: -30px;
+  background: radial-gradient(circle, rgba(34,197,94,0.25), transparent 70%);
+  filter: blur(30px);
+  z-index: -1;
+}
+
+/* FACES */
+.face {
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.5);
+  backdrop-filter: blur(14px);
+
+  box-shadow:
+    0 0 25px rgba(34,197,94,0.4),
+    inset 0 0 15px rgba(34,197,94,0.2);
+}
+
+/* POSITION */
+.front  { transform: rotateY(0deg) translateZ(45px); }
+.back   { transform: rotateY(180deg) translateZ(45px); }
+.right  { transform: rotateY(90deg) translateZ(45px); }
+.left   { transform: rotateY(-90deg) translateZ(45px); }
+.top    { transform: rotateX(90deg) translateZ(45px); }
+.bottom { transform: rotateX(-90deg) translateZ(45px); }
+
+/* 🔄 SMOOTH ROTATION */
+@keyframes rotateCube {
+  0%   { transform: rotateX(0deg) rotateY(0deg); }
+  50%  { transform: rotateX(180deg) rotateY(180deg); }
+  100% { transform: rotateX(360deg) rotateY(360deg); }
+}
+
+/* ===================================================== */
+/* ✨ BRAND TEXT (PREMIUM) */
+/* ===================================================== */
+
+.loader-title {
+  font-size: 22px;
+  font-weight: 600;
+  background: linear-gradient(90deg, #22c55e, #4ade80, #86efac);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.5px;
+}
+
+.loader-sub {
+  font-size: 13px;
+  color: #9ca3af;
+  animation: pulseText 1.8s infinite ease-in-out;
+}
+
+@keyframes pulseText {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
