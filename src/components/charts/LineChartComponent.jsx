@@ -1,6 +1,6 @@
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   Tooltip,
   ResponsiveContainer,
@@ -11,11 +11,17 @@ export default function LineChartComponent({ data = [] }) {
   return (
     <div style={{ width: "100%", height: 300 }}>
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data}>
+        <AreaChart data={data}>
 
-          
-          
-          {/* 🔥 GRID (subtle like design) */}
+          {/* 🔥 GRADIENT */}
+          <defs>
+            <linearGradient id="greenGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#22C55E" stopOpacity={0.4} />
+              <stop offset="100%" stopColor="#22C55E" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+
+          {/* GRID */}
           <CartesianGrid
             stroke="rgba(255,255,255,0.05)"
             vertical={false}
@@ -38,19 +44,20 @@ export default function LineChartComponent({ data = [] }) {
             }}
           />
 
-          {/* 🔥 MAIN LINE (UPDATED) */}
-          <Line
-  type="monotone"
-  dataKey="value"
-  stroke="#22C55E"
-  strokeWidth={3}
-  dot={{ r: 5, fill: "#22C55E" }}
-  activeDot={{ r: 7 }}
-  style={{
-    filter: "drop-shadow(0 0 10px #22C55E)",
-  }}
-/>
-        </LineChart>
+          {/* 🔥 AREA (FILL) */}
+          <Area
+            type="monotone"
+            dataKey="value"
+            stroke="#22C55E"
+            strokeWidth={3}
+            fill="url(#greenGradient)"
+            dot={{ r: 5, fill: "#22C55E" }}
+            activeDot={{ r: 7 }}
+            style={{
+              filter: "drop-shadow(0 0 10px #22C55E)",
+            }}
+          />
+        </AreaChart>
       </ResponsiveContainer>
     </div>
   );

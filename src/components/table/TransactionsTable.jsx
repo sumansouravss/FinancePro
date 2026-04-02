@@ -1,158 +1,249 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useStore } from "../../store/useStore";
-import { Search, MoreVertical, Pencil } from "lucide-react";
+import { exportToCSV, exportToJSON } from ".././export/exportUtils";
+
+import {
+  MoreVertical,
+  Search,
+  SlidersHorizontal,
+} from "lucide-react";
 
 export default function TransactionsTable() {
-  const { role } = useStore();
+  const { role, filteredTransactions } = useStore();
+  const data = filteredTransactions();
+
+  const [query, setQuery] = useState("");
+  const [openRow, setOpenRow] = useState(null);
   const [showExport, setShowExport] = useState(false);
-  const { filteredTransactions, setFilter } = useStore();
-const data = filteredTransactions();
+
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("date");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const ITEMS_PER_PAGE = 5;
+
+  // 🔥 FILTER + SEARCH + SORT
+  const processedData = useMemo(() => {
+    let result = [...data];
+
+    if (query) {
+      result = result.filter((t) =>
+        t.category.toLowerCase().includes(query.toLowerCase())
+      );
+    }
+
+    if (typeFilter !== "all") {
+      result = result.filter((t) => t.type === typeFilter);
+    }
+
+    if (sortBy === "amount") {
+      result.sort((a, b) => b.amount - a.amount);
+    } else {
+      result.sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
+
+    return result;
+  }, [data, query, typeFilter, sortBy]);
+
+  // 🔥 PAGINATION
+  const totalPages = Math.ceil(processedData.length / ITEMS_PER_PAGE);
+
+  const paginatedData = processedData.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
-    <div className="card mt-6">
-      
-      {/* 🔝 HEADER + FILTERS */}
-      <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
-        
-        {/* LEFT */}
-        <div className="flex items-center gap-2 flex-wrap">
-          
-          <h3 className="text-sm text-gray-300 mr-2">Transactions</h3>
+    <div className="card mt-6 p-4">
 
-          <div className="flex items-center gap-1 bg-white/5 border border-white/10 px-3 py-2 rounded-lg text-sm">
+      {/* 🔝 HEADER */}
+      <div className="flex flex-col md:flex-row md:justify-between gap-3 mb-4">
+        
+        <h2 className="text-lg font-semibold">Transaction History</h2>
+
+        <div className="flex flex-wrap gap-2 items-center">
+
+          {/* SEARCH */}
+          <div className="flex items-center bg-white/5 border border-white/10 px-3 py-2 rounded-lg">
             <Search size={14} />
-            <span>All Transactions</span>
+            <input
+              placeholder="Search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="bg-transparent outline-none ml-2 text-sm w-32"
+            />
           </div>
 
-          <select className="bg-white/5 border border-white/10 px-3 py-2 rounded-lg text-sm">
-            <option>All Time</option>
+          {/* FILTER */}
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="bg-white/5 border border-white/10 px-3 py-2 rounded-lg text-sm"
+          >
+            <option value="all">All</option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
           </select>
 
-          <select className="bg-white/5 border border-white/10 px-3 py-2 rounded-lg text-sm">
-            <option>Sort: Date</option>
+          {/* SORT */}
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="bg-white/5 border border-white/10 px-3 py-2 rounded-lg text-sm"
+          >
+            <option value="date">Sort: Date</option>
+            <option value="amount">Sort: Amount</option>
           </select>
 
-          <button className="bg-white/5 border border-white/10 px-3 py-2 rounded-lg text-sm hover:bg-white/10">
-            Clear Filters
+          {/* CLEAR */}
+          <button
+            onClick={() => {
+              setQuery("");
+              setTypeFilter("all");
+              setSortBy("date");
+            }}
+            className="bg-white/5 border border-white/10 px-3 py-2 rounded-lg text-sm hover:bg-white/10"
+          >
+            Clear
           </button>
-        </div>
 
-        {/* RIGHT */}
-        <div className="relative">
+          {/* 🔥 EXPORT BUTTON */}
           {role === "admin" && (
-            <button
-              onClick={() => setShowExport(!showExport)}
-              className="bg-green-500 px-4 py-2 rounded-lg text-sm flex items-center gap-2 hover:bg-green-600"
-            >
-              + Add Transaction
-            </button>
-          )}
+            <div className="relative">
+              <button
+                onClick={() => setShowExport(!showExport)}
+                className="bg-green-500 px-4 py-2 rounded-lg text-sm hover:bg-green-600"
+              >
+                Export
+              </button>
 
-          {showExport && (
-            <div className="absolute right-0 mt-2 w-40 bg-[#0f172a] border border-white/10 rounded-lg shadow-lg z-10">
-              <p className="p-2 hover:bg-white/10 cursor-pointer">
-                Export CSV
-              </p>
-              <p className="p-2 hover:bg-white/10 cursor-pointer">
-                Export JSON
-              </p>
+              {showExport && (
+                <div className="absolute right-0 mt-2 w-40 bg-[#0f172a] border border-white/10 rounded-lg shadow-lg z-10">
+                  
+                  <p
+                    onClick={() => exportToCSV(processedData)}
+                    className="p-2 hover:bg-white/10 cursor-pointer"
+                  >
+                    Export CSV
+                  </p>
+
+                  <p
+                    onClick={() => exportToJSON(processedData)}
+                    className="p-2 hover:bg-white/10 cursor-pointer"
+                  >
+                    Export JSON
+                  </p>
+
+                </div>
+              )}
             </div>
           )}
+
         </div>
       </div>
 
-      <div className="flex gap-2 mb-4">
-
-  <select
-    onChange={(e) => setFilter(e.target.value)}
-    className="bg-white/5 border border-white/10 px-3 py-2 rounded-lg text-sm"
-  >
-    <option value="all">All Transactions</option>
-    <option value="income">Income</option>
-    <option value="expense">Expense</option>
-  </select>
-
-</div>
-
       {/* 📋 TABLE */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          
-          {/* HEADER */}
-          <thead className="text-gray-400 border-b border-white/10">
-            <tr>
-              <th className="text-left py-3">Date</th>
-              <th className="text-left">Amount</th>
-              <th className="text-left">Category</th>
-              <th className="text-left">Type</th>
-              <th></th>
-            </tr>
-          </thead>
-          
+      <div className="space-y-3">
 
-          {/* BODY */}
-          <tbody>
-            {data.map((t) => (
-              <tr
-                key={t.id}
-                className="border-b border-white/5 hover:bg-white/5 transition"
+        {paginatedData.length === 0 ? (
+          <p className="text-center py-6 text-gray-400">
+            No transactions found
+          </p>
+        ) : (
+          paginatedData.map((t) => (
+            <div
+              key={t.id}
+              className="flex justify-between items-center bg-white/5 hover:bg-white/10 transition p-3 rounded-xl"
+            >
+              <div className="flex items-center gap-3">
+                <img
+                  src={`https://ui-avatars.com/api/?name=${t.category}`}
+                  className="w-8 h-8 rounded-full"
+                />
+                <div>
+                  <p className="text-sm">{t.category}</p>
+                  <p className="text-xs text-gray-400">{t.date}</p>
+                </div>
+              </div>
+
+              <div className="hidden sm:block text-sm">
+                ₹{t.amount}
+              </div>
+
+              <div
+                className={
+                  t.type === "expense"
+                    ? "text-red-400 text-sm"
+                    : "text-green-400 text-sm"
+                }
               >
-                <td className="py-3">{t.date}</td>
+                {t.type}
+              </div>
 
-                <td>₹{t.amount}</td>
+              <span
+                className={`px-3 py-1 rounded-full text-xs ${
+                  t.type === "expense"
+                    ? "bg-yellow-500/20 text-yellow-400"
+                    : "bg-green-500/20 text-green-400"
+                }`}
+              >
+                {t.type === "expense" ? "Pending" : "Successful"}
+              </span>
 
-                <td>{t.category}</td>
-
-                <td
-                  className={
-                    t.type === "expense"
-                      ? "text-red-400"
-                      : "text-green-400"
+              {/* ACTION */}
+              <div className="relative">
+                <button
+                  onClick={() =>
+                    setOpenRow(openRow === t.id ? null : t.id)
                   }
                 >
-                  {t.type === "expense" ? "Expense" : "Income"}
-                </td>
+                  <MoreVertical size={16} />
+                </button>
 
-                {/* ACTIONS */}
-                <td className="flex items-center gap-2 justify-end pr-2">
-                  <button className="p-2 rounded bg-white/5 hover:bg-white/10">
-                    <Pencil size={14} />
-                  </button>
+                {openRow === t.id && (
+                  <div className="absolute right-0 top-8 w-28 bg-[#0f172a] border border-white/10 rounded-lg shadow-lg">
+                    
+                    {role === "admin" && (
+                      <p className="p-2 hover:bg-white/10 cursor-pointer">
+                        Edit
+                      </p>
+                    )}
 
-                  <button className="p-2 rounded bg-white/5 hover:bg-white/10">
-                    <MoreVertical size={14} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                    <p className="p-2 hover:bg-white/10 cursor-pointer">
+                      View
+                    </p>
+
+                    {role === "admin" && (
+                      <p className="p-2 hover:bg-red-500/20 text-red-400 cursor-pointer">
+                        Delete
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* 🔻 PAGINATION */}
-      <div className="flex justify-between items-center mt-4 text-xs text-gray-400">
-        
-        <div></div>
-
-        <div className="flex items-center gap-2">
-          <button>{"<"}</button>
-
-          {[1, 2, 3, 4, 5].map((n) => (
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-4 gap-2">
+          {[...Array(totalPages)].map((_, i) => (
             <button
-              key={n}
-              className={`px-2 py-1 rounded ${
-                n === 2 ? "bg-green-500 text-white" : "hover:bg-white/10"
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`px-3 py-1 rounded ${
+                currentPage === i + 1
+                  ? "bg-green-500 text-white"
+                  : "bg-white/5 hover:bg-white/10"
               }`}
             >
-              {n}
+              {i + 1}
             </button>
           ))}
-
-          <button>{">"}</button>
         </div>
-
-        <div>10 rows page</div>
-      </div>
+      )}
     </div>
   );
 }

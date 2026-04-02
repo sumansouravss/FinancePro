@@ -1,14 +1,13 @@
 import { create } from "zustand";
 
-
 export const useStore = create((set, get) => ({
-  // 🌗 THEME
-  theme: "dark",
+  // 🌗 THEME (PERSISTED)
+  theme: localStorage.getItem("theme") || "dark",
 
   // 👤 ROLE (RBAC)
   role: "admin",
 
-  // 📊 TRANSACTIONS (with default data)
+  // 📊 TRANSACTIONS
   transactions: [
     {
       id: 1,
@@ -26,18 +25,18 @@ export const useStore = create((set, get) => ({
     },
   ],
 
-  // 🔍 FILTER STATE
+  // 🔍 FILTER
   filter: "all",
 
-  // 🌗 TOGGLE THEME
+  // 🌗 TOGGLE THEME (SAVE + APPLY)
   toggleTheme: () =>
-    set((s) => ({
-      theme: s.theme === "dark" ? "light" : "dark",
+    set((s) => {
+      const newTheme = s.theme === "dark" ? "light" : "dark";
+      localStorage.setItem("theme", newTheme);
+      return { theme: newTheme };
+    }),
 
-    })),
-
-    
-  // 👤 TOGGLE ROLE
+  // 👤 ROLE SWITCH
   toggleRole: () =>
     set((s) => ({
       role: s.role === "admin" ? "viewer" : "admin",
@@ -49,10 +48,23 @@ export const useStore = create((set, get) => ({
       transactions: [...s.transactions, { ...tx, id: Date.now() }],
     })),
 
+    // DELETE TRANSACTION
+    deleteTransaction: (id) =>
+  set((s) => ({
+    transactions: s.transactions.filter((t) => t.id !== id),
+  })),
+
+updateTransaction: (updatedTx) =>
+  set((s) => ({
+    transactions: s.transactions.map((t) =>
+      t.id === updatedTx.id ? updatedTx : t
+    ),
+  })),
+
   // 🔍 SET FILTER
   setFilter: (filter) => set({ filter }),
 
-  // 📌 FILTERED DATA (IMPORTANT)
+  // 📌 FILTERED DATA
   filteredTransactions: () => {
     const { transactions, filter } = get();
 

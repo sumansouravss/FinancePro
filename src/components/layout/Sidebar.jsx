@@ -1,9 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
 import { useStore } from "../../store/useStore";
 import { Home, List, BarChart, Box } from "lucide-react";
+import { exportToCSV, exportToJSON } from "../export/exportUtils";
 
 export default function Sidebar() {
-  const { role, toggleRole } = useStore();
+  const { role, toggleRole, transactions } = useStore();
   const location = useLocation();
 
   const isActive = (path) =>
@@ -22,8 +23,8 @@ export default function Sidebar() {
       <div>
         {/* LOGO */}
         <div className="flex items-center gap-2 mb-8">
-          <Box className="text-gray-300" size={20} />
-          <h1 className="text-lg font-semibold">FinancePro</h1>
+          <Box className="text-gray-300" size={60} />
+          <h1 className="text-2xl font-semibold text-green-400">FinancePro</h1>
         </div>
 
         {/* NAV */}
@@ -87,9 +88,21 @@ export default function Sidebar() {
         </div>
 
         {/* EXPORT BUTTON */}
-        <button className="w-full flex items-center justify-center gap-2 bg-white/5 border border-white/10 py-2 rounded-xl hover:bg-white/10 transition text-sm">
-          ⬇ Export CSV/JSON
-        </button>
+        <div className="relative">
+  <button
+    onClick={() => exportToCSV(transactions)}
+    className="w-full flex items-center justify-center gap-2 bg-white/5 border border-white/10 py-2 rounded-xl hover:bg-white/10 transition text-sm"
+  >
+    ⬇ Export CSV
+  </button>
+
+  <button
+    onClick={() => exportToJSON(transactions)}
+    className="w-full mt-2 flex items-center justify-center gap-2 bg-white/5 border border-white/10 py-2 rounded-xl hover:bg-white/10 transition text-sm"
+  >
+    ⬇ Export JSON
+  </button>
+</div>
 
         {/* SAVED STATUS */}
         <p className="text-xs text-green-400 flex items-center gap-2">
