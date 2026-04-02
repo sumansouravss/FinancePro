@@ -158,8 +158,8 @@ Enhancements like:
 ##  Screenshots
 
 > Add screenshots of:
-
-* Dashboard view (./assets/Finance Dashboard Dark Mode.png)
+Dashboard view   https://github.com/sumansouravss/FinancePro/blob/main/src/assets/Finance%20Dashboard%20Dark%20Mode..png
+* 
 * Transactions page
 * Insights page
 * Dark mode
