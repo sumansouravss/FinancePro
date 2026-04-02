@@ -33,7 +33,8 @@ export default function Sidebar() {
             to="/"
             className={`flex items-center gap-3 px-3 py-2 rounded-xl transition ${isActive("/")}`}
           >
-            <Home size={18} />
+          <Home size={18} className="icon-hover" />
+
             Dashboard
           </Link>
 
@@ -41,7 +42,7 @@ export default function Sidebar() {
             to="/transactions"
             className={`flex items-center gap-3 px-3 py-2 rounded-xl transition ${isActive("/transactions")}`}
           >
-            <List size={18} />
+            <List size={18} className="icon-hover" />
             Transactions
           </Link>
 
@@ -49,7 +50,7 @@ export default function Sidebar() {
             to="/insights"
             className={`flex items-center gap-3 px-3 py-2 rounded-xl transition ${isActive("/insights")}`}
           >
-            <BarChart size={18} />
+            <BarChart size={18} className="icon-hover" />
             Insights
           </Link>
         </nav>
