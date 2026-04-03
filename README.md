@@ -160,7 +160,7 @@ Enhancements like:
 
 
 ###  Dashboard
-![Dashboard](./src/assets/Finance%20Dashboard%20Dark%20Mode.png)
+![Dashboard](./src/assets/Finance%20Dashboard%20Dark%20Mode..png)
 
 ###  Transactions
 ![Transactions](./src/assets/transaction%20page.png)
