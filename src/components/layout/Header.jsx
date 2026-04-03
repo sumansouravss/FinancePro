@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useStore } from "../../store/useStore";
 import {
   Search,
@@ -12,13 +13,22 @@ import {
 export default function Header({ onMenuClick }) {
   const { toggleTheme, theme } = useStore();
 
+  const [showAlerts, setShowAlerts] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const [showAI, setShowAI] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const alerts = [
+    "Payment received 💰",
+    "New transaction added",
+    "Monthly report ready",
+  ];
+
   return (
-    <div className="flex flex-wrap md:flex-nowrap justify-between items-center gap-2 px-4 py-3 border-b border-white/10 bg-[#0B0F14]">
+    <div className="relative flex flex-wrap md:flex-nowrap justify-between items-center gap-2 px-4 py-3 border-b border-white/10 bg-[#0B0F14]">
 
       {/* LEFT */}
       <div className="flex items-center gap-3">
-        
-        {/* MOBILE MENU */}
         <button
           onClick={onMenuClick}
           className="md:hidden p-2 rounded-lg hover:bg-white/10"
@@ -38,34 +48,61 @@ export default function Header({ onMenuClick }) {
         <div className="flex items-center gap-2 bg-[#111827] px-3 md:px-4 py-2 rounded-full border border-white/10 w-full sm:w-auto">
           <Search size={14} className="text-gray-400" />
           <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search..."
             className="bg-transparent outline-none text-sm text-white placeholder-gray-400 w-full sm:w-40 md:w-60"
           />
         </div>
 
-        {/* 🤖 AI */}
-        <button className="flex items-center gap-1 md:gap-2 bg-[#111827] border border-white/10 px-2 md:px-3 py-2 rounded-full hover:bg-white/10 transition">
+        {/* AI */}
+        <button
+          onClick={() => setShowAI(!showAI)}
+          className="flex items-center gap-1 md:gap-2 bg-[#111827] border border-white/10 px-2 md:px-3 py-2 rounded-full hover:bg-white/10 transition"
+        >
           <Bot color="grey" size={18} />
           <span className="hidden md:inline text-sm text-gray-400">
             AI
           </span>
         </button>
 
-        {/* 🔔 NOTIFICATIONS */}
+        {/* AI POPUP */}
+        {showAI && (
+          <div className="absolute right-20 top-16 w-72 bg-[#111827] border border-white/10 rounded-xl p-3 text-sm text-white shadow-lg">
+            <p className="mb-2 text-gray-400">AI Assistant</p>
+            <p className="text-xs">Try: "Show expenses"</p>
+          </div>
+        )}
+
+        {/* 🔔 ALERTS */}
         <div className="relative">
-          <button className="flex items-center gap-1 md:gap-2 bg-[#111827] border border-white/10 px-2 md:px-3 py-2 rounded-full hover:bg-white/10 transition">
+          <button
+            onClick={() => setShowAlerts(!showAlerts)}
+            className="flex items-center gap-1 md:gap-2 bg-[#111827] border border-white/10 px-2 md:px-3 py-2 rounded-full hover:bg-white/10 transition"
+          >
             <Bell color="grey" size={16} />
             <span className="hidden md:inline text-sm text-gray-400">
               Alerts
             </span>
           </button>
 
-          <span className="absolute -top-1 -right-1 bg-red-500 text-[10px] px-1.5 rounded-full">
-            3
-          </span>
+
+          {/* ALERT DROPDOWN */}
+          {showAlerts && (
+            <div className="absolute right-0 mt-2 w-56 bg-[#111827] border border-white/10 rounded-xl shadow-lg p-2">
+              {alerts.map((item, i) => (
+                <p
+                  key={i}
+                  className="text-sm text-gray-300 p-2 hover:bg-white/10 rounded-lg"
+                >
+                  {item}
+                </p>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* 🌗 THEME */}
+        {/* 🌗 THEME (NO CHANGE) */}
         <button
           onClick={toggleTheme}
           className="p-2 bg-green-500 rounded-lg hover:scale-105 transition"
@@ -78,19 +115,38 @@ export default function Header({ onMenuClick }) {
         </button>
 
         {/* 👤 PROFILE */}
-        <div className="flex items-center gap-2 bg-[#111827] border border-white/10 px-2 md:px-3 py-1.5 md:py-2 rounded-full cursor-pointer hover:bg-white/10 transition">
-          
-          <img
-            src="https://i.pravatar.cc/40"
-            className="w-7 h-7 md:w-8 md:h-8 rounded-full"
-          />
+        <div className="relative">
+          <div
+            onClick={() => setShowProfile(!showProfile)}
+            className="flex items-center gap-2 bg-[#111827] border border-white/10 px-2 md:px-3 py-1.5 md:py-2 rounded-full cursor-pointer hover:bg-white/10 transition"
+          >
+            <img
+              src="/src/assets/profile.png"
+              className="w-7 h-7 md:w-8 md:h-8 rounded-full"
+            />
 
-          <div className="hidden md:block text-sm">
-            <p className="text-white leading-none">John</p>
-            <p className="text-xs text-gray-400">Admin</p>
+            <div className="hidden md:block text-sm">
+              <p className="text-white leading-none">John</p>
+              <p className="text-xs text-gray-400">Admin</p>
+            </div>
+
+            <ChevronDown size={14} className="hidden md:block" />
           </div>
 
-          <ChevronDown size={14} className="hidden md:block" />
+          {/* PROFILE DROPDOWN */}
+          {showProfile && (
+            <div className="absolute right-0 mt-2 w-44 bg-[#111827] border border-white/10 rounded-xl shadow-lg p-2 text-sm">
+              <p className="p-2 hover:bg-white/10 rounded-lg cursor-pointer">
+                Profile
+              </p>
+              <p className="p-2 hover:bg-white/10 rounded-lg cursor-pointer">
+                Settings
+              </p>
+              <p className="p-2 hover:bg-red-500/20 text-red-400 rounded-lg cursor-pointer">
+                Logout
+              </p>
+            </div>
+          )}
         </div>
 
       </div>
