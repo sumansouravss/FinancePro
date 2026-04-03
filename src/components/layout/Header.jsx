@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useStore } from "../../store/useStore";
+
 import {
   Search,
   Bell,
@@ -121,7 +122,7 @@ export default function Header({ onMenuClick }) {
             className="flex items-center gap-2 bg-[#111827] border border-white/10 px-2 md:px-3 py-1.5 md:py-2 rounded-full cursor-pointer hover:bg-white/10 transition"
           >
             <img
-              src="/src/assets/profile.png"
+              src="/profilepic.png"
               className="w-7 h-7 md:w-8 md:h-8 rounded-full"
             />
 
