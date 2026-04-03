@@ -157,13 +157,22 @@ Enhancements like:
 
 ##  Screenshots
 
-> Add screenshots of:
-![Dashboard Page](./assets/Finance Dashboard Dark Mode.png)
-* Transactions page
-* Insights page
-* Dark mode
-* Mobile view
+## 📸 Screenshots
 
+### 🏠 Dashboard
+![Dashboard](./src/assets/Finance%20Dashboard%20Dark%20Mode.png)
+
+### 💸 Transactions
+![Transactions](./src/assets/transaction%20page.png)
+
+### 📊 Insights
+![Insights](./src/assets/Insights%20page.png)
+
+### 🌙 Dark Mode
+![Dark Mode](./src/assets/light%20mode%20dashboard.png)
+
+### 📱 Mobile View
+![Mobile](./src/assets/mobile%20view.png)
 ---
 
 ##  Live Demo & Repository
