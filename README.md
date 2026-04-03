@@ -1,4 +1,4 @@
-#  Finance Dashboard UI
+#  FinancePro  Dashboard UI
 
 ##  Overview
 
@@ -74,7 +74,7 @@ The project focuses on **UI/UX quality, state management, and frontend architect
 
 ```bash
 # Clone repository
-git clone <your-repo-link>
+git clone <https://github.com/your-username/FinancePro>
 
 # Install dependencies
 npm install
@@ -157,19 +157,28 @@ Enhancements like:
 
 ##  Screenshots
 
-> Add screenshots of:
-![Dashboard Page](./assets/Finance Dashboard Dark Mode.png)
-* Transactions page
-* Insights page
-* Dark mode
-* Mobile view
 
+
+###  Dashboard
+![Dashboard](./src/assets/Finance%20Dashboard%20Dark%20Mode..png)
+
+###  Transactions
+![Transactions](./src/assets/transaction%20page.png)
+
+###  Insights
+![Insights](./src/assets/Insights%20page.png)
+
+###  Dark Mode
+![Dark Mode](./src/assets/light%20mode%20dashboard.png)
+
+###  Mobile View
+![Mobile](./src/assets/mobile%20view.png)
 ---
 
 ##  Live Demo & Repository
 
-*  Live Demo: <your-deployment-link>
-*  GitHub Repo: 
+*  Live Demo: <https://finance-pro-jade.vercel.app/>
+*  GitHub Repo: https://github.com/your-username/FinancePro
 
 ---
 
@@ -185,3 +194,10 @@ This project demonstrates the ability to:
 It reflects a practical approach to building real-world dashboard interfaces.
 
 ---
+Author
+
+Suman Sourav
+Frontend Developer | React Enthusiast
+If you like this project
+
+Give it a ⭐ on GitHub and share your feedback!
